@@ -1,0 +1,18 @@
+# Python & Virtual Environment
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+
+# Vector DB / Local Storage
+chroma_db/
+*.chroma
+uploads/
+
+# Node / React Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env.local
+
+# Environment & Secrets
+.env
