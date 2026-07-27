@@ -1,0 +1,32 @@
+:root {
+  /* Background gradient (from reference image) */
+  --bg-gradient-start: #e6ebfa;
+  --bg-gradient-end: #a9bbec;
+
+  /* Brand ink */
+  --navy: #0e2c40;
+  --navy-soft: #1c4258;
+
+  /* Chat panel chrome */
+  --cyan: #12c4e8;
+  --cyan-dark: #0eaed0;
+  --cyan-body-start: #cdf3fb;
+  --cyan-body-end: #eafcff;
+
+  --white: #ffffff;
+
+  /* Message bubbles — warm tones complement the cool blue/cyan backdrop */
+  --user-bubble: #123a4d;
+  --user-bubble-text: #ffffff;
+
+  --ai-bubble: #c2dbf7;
+  --ai-bubble-text: #2a1206;
+
+  --error-bubble: #e5484d;
+  --error-bubble-text: #ffffff;
+
+  --radius-lg: 28px;
+  --radius-md: 18px;
+
+  --shadow-panel: 0 30px 60px -20px rgba(14, 44, 64, 0.35);
+}

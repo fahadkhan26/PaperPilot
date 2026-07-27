@@ -45,7 +45,6 @@ def split_by_markdown_headers(documents: List[Document]) -> List[Document]:
     for doc in documents:
         splits = markdown_splitter.split_text(doc.page_content)
         for s in splits:
-            # Reattach the page number metadata to each split
             s.metadata.update(doc.metadata)
             header_docs.append(s)
             
@@ -85,7 +84,7 @@ def process_and_ingest_pdf(file_path: str) -> Chroma:
     vector_store = Chroma.from_documents(
         documents=final_chunks,
         embedding=embeddings,
-        persist_directory=CHROMA_DB_PATH
+        # persist_directory=CHROMA_DB_PATH
     )
     
     print("Ingestion complete!")

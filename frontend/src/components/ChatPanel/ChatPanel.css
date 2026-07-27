@@ -1,0 +1,10 @@
+.chat-panel {
+  width: min(680px, 92vw);
+  height: min(760px, 82vh);
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-panel);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}

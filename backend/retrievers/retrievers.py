@@ -25,27 +25,24 @@ def build_hybrid_retriever(documents: List[Document]):
     Combines Vector search, BM25, Multi-Query generation, 
     and a Cross-Encoder Reranker into a single retrieval pipeline.
     """
-    # 1. Initialize Vector Retriever
+
     vector_store = get_vector_store()
     vector_retriever = vector_store.as_retriever(search_kwargs={"k": 25})
     
-    # 2. Initialize BM25 Retriever
+
     bm25_retriever = BM25Retriever.from_documents(documents)
     bm25_retriever.k = 25
     
-    # 3. Combine into Ensemble (Hybrid)
     ensemble_retriever = EnsembleRetriever(
         retrievers=[vector_retriever, bm25_retriever],
         weights=[0.5, 0.5]
     )
     
-    # 4. Wrap with Multi-Query Generation
     mq_retriever = MultiQueryRetriever.from_llm(
         retriever=ensemble_retriever,
         llm=llm
     )
     
-    # 5. Apply Cross-Encoder Reranking
     base_compressor = CrossEncoderReranker(
         model=reranker_model,
         top_n=10

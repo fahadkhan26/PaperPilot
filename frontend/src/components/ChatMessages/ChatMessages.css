@@ -1,0 +1,17 @@
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: linear-gradient(180deg, var(--cyan-body-start), var(--cyan-body-end));
+}
+
+.chat-messages__empty {
+  margin: auto;
+  text-align: center;
+  color: var(--navy-soft);
+  font-style: italic;
+  font-size: 17px;
+}

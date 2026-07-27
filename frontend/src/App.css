@@ -1,0 +1,16 @@
+.app {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6vw;
+  padding: 6vh 6vw;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 900px) {
+  .app {
+    flex-direction: column;
+    text-align: center;
+  }
+}

@@ -1,0 +1,24 @@
+# API & Server
+fastapi
+uvicorn
+python-multipart
+pydantic
+
+# RAG Orchestration
+langchain
+langchain-core
+langchain-community
+langchain-ollama
+
+# Vector Store & Retrieval
+chromadb
+langchain-chroma
+rank-bm25
+
+# Document Processing
+pymupdf4llm
+
+# Machine Learning & Embeddings
+torch
+transformers
+sentence-transformers

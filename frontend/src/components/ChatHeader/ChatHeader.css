@@ -1,0 +1,22 @@
+.chat-header {
+  background: var(--cyan);
+  padding: 22px 24px;
+  text-align: center;
+  flex-shrink: 0;
+  transition: background 0.2s ease;
+}
+
+.chat-header__label {
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-size: 20px;
+  color: var(--navy);
+}
+
+.chat-header--error {
+  background: var(--error-bubble);
+}
+
+.chat-header--error .chat-header__label {
+  color: var(--error-bubble-text);
+}

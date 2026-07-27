@@ -1,0 +1,21 @@
+.hero {
+  max-width: 480px;
+}
+
+.hero__title {
+  font-size: clamp(48px, 7vw, 84px);
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  margin: 0 0 18px 0;
+  color: var(--navy);
+  font-weight: 400;
+}
+
+.hero__subtitle {
+  font-size: clamp(18px, 2vw, 24px);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  line-height: 1.5;
+  color: var(--navy-soft);
+  margin: 0;
+}
