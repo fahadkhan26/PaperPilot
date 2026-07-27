@@ -89,4 +89,4 @@ def process_and_ingest_pdf(file_path: str) -> Chroma:
     )
     
     print("Ingestion complete!")
-    return vector_store
+    return vector_store, final_chunks
