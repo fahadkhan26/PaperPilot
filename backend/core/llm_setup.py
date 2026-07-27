@@ -6,10 +6,10 @@ llm = ChatOllama(
     model=LLM_MODEL
 )
 
-embeddings = OllamaEmbeddings(
-    model=EMBEDDING_MODEL
+reranker_model = HuggingFaceCrossEncoder(
+    model_name=RERANKER_MODEL
 )
 
-hf_cross_encoder_model = HuggingFaceCrossEncoder(
-    model_name=RERANKER_MODEL
+embeddings = OllamaEmbeddings(
+    model=EMBEDDING_MODEL
 )

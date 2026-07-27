@@ -8,8 +8,9 @@ from langchain_classic.retrievers.document_compressors import CrossEncoderRerank
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_classic.chains.history_aware_retriever import create_history_aware_retriever
 from langchain_classic.retrievers.multi_query import MultiQueryRetriever
-from core import embeddings, llm, CHROMA_DB_PATH
+from core import embeddings, llm, reranker_model, CHROMA_DB_PATH
 from typing import List
+
 
 def get_vector_store() -> Chroma:
     """Connects to the existing Chroma database on disk."""
@@ -45,11 +46,8 @@ def build_hybrid_retriever(documents: List[Document]):
     )
     
     # 5. Apply Cross-Encoder Reranking
-    hf_cross_encoder_model = HuggingFaceCrossEncoder(
-        model_name="BAAI/bge-reranker-base"
-    )
     base_compressor = CrossEncoderReranker(
-        model=hf_cross_encoder_model, 
+        model=reranker_model,
         top_n=10
     )
     final_hybrid_rerank_retriever = ContextualCompressionRetriever(

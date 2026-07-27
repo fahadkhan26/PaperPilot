@@ -12,8 +12,10 @@ from chains.chains import build_rag_chain, build_summary_chain
 app = FastAPI(title="PaperPilot RAG API", description="Backend for local PDF RAG system")
 
 app_state = {
-    "documents": [],     # Required in-memory for BM25Retriever
-    "chat_history": []   # Tracks the LangChain message objects
+    "documents": [],       # Required in-memory for BM25Retriever
+    "chat_history": [],    # Tracks the LangChain message objects
+    "rag_chain": None,     # Cached chain — built once per document set, not per request
+    "summary_chain": build_summary_chain(),  # Cheap to build; created once at startup
 }
 
 TEMP_UPLOAD_DIR = "./temp_uploads"
@@ -36,7 +38,9 @@ class ChatResponse(BaseModel):
 async def upload_document(file: UploadFile = File(...)):
     """
     Accepts a PDF file, processes it via the ingestion orchestrator,
-    and updates both ChromaDB and in-memory BM25 state.
+    updates in-memory BM25 state, and rebuilds the cached RAG chain
+    (BM25 index, MultiQueryRetriever, and cross-encoder reranker)
+    exactly once for the new document set — not on every /chat call.
     """
     if not file.filename.endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Only PDF files are supported.")
@@ -54,6 +58,11 @@ async def upload_document(file: UploadFile = File(...)):
         
         # 3. Save final chunks in memory (Required for BM25 Retriever)
         app_state["documents"].extend(final_chunks)
+
+        # 4. Rebuild the cached RAG chain now that the document set has
+        # changed. This is the only place the expensive retriever stack
+        # (BM25 indexing + cross-encoder load) should happen.
+        app_state["rag_chain"] = build_rag_chain(app_state["documents"])
         
         return {
             "message": f"Successfully ingested {file.filename} into the RAG pipeline.",
@@ -74,23 +83,33 @@ async def chat_with_document(request: ChatRequest):
     """
     Retrieves context, generates an answer, summarizes it (or bypasses if 
     fallback is triggered), and maintains a 10-message sliding window history.
+
+    Flow mirrors pipeline_03.ipynb exactly:
+      1. Stream the cached RAG chain and accumulate chunks into full_response.
+      2. Check the fallback phrase; bypass or summarize accordingly.
+      3. Extend chat_history with the Human/AI messages.
+      4. Trim chat_history to the last 10 messages.
+
+    The chain itself is NOT rebuilt here — it's reused from app_state,
+    where it was constructed once in /upload.
     """
-    if not app_state["documents"]:
+    if not app_state["documents"] or app_state["rag_chain"] is None:
         raise HTTPException(
             status_code=400, 
             detail="No documents have been ingested yet. Please upload a PDF first."
         )
 
     try:
-        # 1. Execute main RAG chain (We use invoke here instead of stream 
-        # for standard REST JSON response, capturing the full response)
-        rag_chain = build_rag_chain(app_state["documents"])
-        
-        full_response = rag_chain.invoke({
+        # 1. Execute the cached RAG chain via streaming, accumulating chunks
+        # into full_response — matches the notebook's `chain.stream(...)` loop.
+        full_response = ""
+        chunks = app_state["rag_chain"].stream({
             "input": request.query,
             "chat_history": app_state["chat_history"]
         })
-        
+        for chunk in chunks:
+            full_response += chunk
+
         # 2. Define the fallback phrase
         fallback_phrase = "The given document does not contain context to this query."
         
@@ -99,8 +118,7 @@ async def chat_with_document(request: ChatRequest):
             ai_summary = fallback_phrase
             print(f"\n---\nAI Summary Bypassed: {ai_summary}\n---\n")
         else:
-            summary_chain = build_summary_chain()
-            ai_summary = summary_chain.invoke({"response": full_response})
+            ai_summary = app_state["summary_chain"].invoke({"response": full_response})
             print(f"\n---\nAI Summary: {ai_summary}\n---\n")
             
         # 4. Append user query and the SUMMARIZED AI response to history

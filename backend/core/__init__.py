@@ -7,6 +7,6 @@ __all__ = [
     "reranker_model",
     "LLM_MODEL",
     "EMBEDDING_MODEL",
+    "reranker_model",
     "CHROMA_DB_PATH",
-    "RERANKER_MODEL",
 ]
