@@ -2,6 +2,8 @@
 
 PaperPilot is a conversational RAG application designed to handle PDF documents. It features a React/Vite frontend and a FastAPI backend powered by LangChain, utilizing a highly optimized, multi-stage retrieval and ingestion pipeline.
 
+![PaperPilot Interface](assets/interface.png)
+
 ## 🌟 Core Features & Architecture
 
 ### 1. Structure-Aware Ingestion
